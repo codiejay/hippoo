@@ -35,12 +35,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/hippoo.git"
+    "url": "git+https://github.com/codiejay/hippoo.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/hippoo/issues"
+    "url": "https://github.com/codiejay/hippoo/issues"
   },
-  "homepage": "https://github.com/yourusername/hippoo#readme",
+  "homepage": "https://github.com/codiejay/hippoo#readme",
   "engines": {
     "node": ">=14"
   }
