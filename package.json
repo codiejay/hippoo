@@ -32,5 +32,16 @@
     "cli-table3": "^0.6.5",
     "commander": "^13.1.0",
     "ora": "^5.4.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/hippoo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/hippoo/issues"
+  },
+  "homepage": "https://github.com/yourusername/hippoo#readme",
+  "engines": {
+    "node": ">=14"
   }
 }

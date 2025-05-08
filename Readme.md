@@ -1,4 +1,4 @@
-# 🦛 Hippoo
+# 🦛 Hippoo (Yes, hippoo with two o's.)
 
 A lightning-fast CLI tool to check and compare npm package sizes. Get instant insights about package sizes, download times, and make informed decisions about your dependencies.
 
@@ -28,12 +28,12 @@ hippoo compare react angular
 
 - 📦 Instant package size analysis
 - 🔄 Smart package comparison with detailed metrics
-- ⚡ Network speed-based download time estimation
+- 🕸️ Network speed-based download time estimation
 - 📊 Bundle size breakdown (minified + gzipped)
 - 🎯 Package scoring system (0-10)
 - 💡 Smart recommendations for different use cases
 - 🔍 Tree-shake information
-- 📈 Dependency count tracking
+- 📈 Dependency count tracking (🎊 Coming Soon 🎊 )
 
 ## 🔍 Analysis Metrics
 
@@ -62,7 +62,7 @@ Options:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ```
 
