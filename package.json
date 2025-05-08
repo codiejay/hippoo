@@ -1,0 +1,36 @@
+{
+  "name": "hippoo",
+  "version": "1.0.0",
+  "description": "🔍 A tool to effortlessly check & compare npm package sizes! 📦✨",
+  "main": "index.js",
+  "bin": {
+    "hippoo": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "size",
+    "package",
+    "package size",
+    "package sizes",
+    "package size comparison",
+    "package size comparison tool",
+    "package size comparison tool",
+    "cli compare packages",
+    "cli package size",
+    "cli package sizes",
+    "cli package size comparison",
+    "cli package size comparison tool"
+  ],
+  "author": "James Akpan",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "axios": "^1.9.0",
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.5",
+    "commander": "^13.1.0",
+    "ora": "^5.4.1"
+  }
+}
