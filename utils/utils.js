@@ -66,7 +66,7 @@ async function getPackageSize(packageName) {
 
   try {
     const response = await axios.get(
-      `${BUNDLEPHOBIA_API}?package=${packageName}`
+      buildBundlephobiaUrl(packageName)
     );
     spinner.succeed(chalk.green(`${packageName.toUpperCase()} Size ->`));
 
@@ -89,52 +89,8 @@ async function getPackageSize(packageName) {
 
     return;
   } catch (error) {
-    spinner.fail(chalk.red(`🤔 Are you sure ${packageName} exists?`));
-
-    if (error.response?.status === 404) {
-      console.log(
-        "\n" +
-          chalk.yellow(
-            "┌──────────────────────────────────────────────────────┐"
-          )
-      );
-      console.log(
-        chalk.yellow("│") +
-          chalk.red.bold(` 🦛 Hippoo couldn't find package: ${packageName} `) +
-          chalk.yellow("│")
-      );
-      console.log(
-        chalk.yellow("└──────────────────────────────────────────────────────┘")
-      );
-      console.log("\n" + chalk.greenBright("Suggestions:"));
-      console.log(
-        chalk.dim(
-          chalk.greenBright("->") + " Check for typos in the package name"
-        )
-      );
-      console.log(
-        chalk.dim(
-          chalk.greenBright("->") + " Make sure the package is published to npm"
-        )
-      );
-      console.log(
-        chalk.dim(chalk.greenBright("->") + " Try searching on npmjs.com")
-      );
-      process.exit(1);
-    } else {
-      console.log(
-        "\n" + chalk.yellow("┌────────────────────────────────────────┐")
-      );
-      console.log(
-        chalk.yellow("│") +
-          chalk.red.bold(` 🦛 Something Went Wrong `) +
-          chalk.yellow("│")
-      );
-      console.log(chalk.yellow("└────────────────────────────────────────┘"));
-      console.log("\n" + chalk.white("Failed to fetch package information:"));
-      console.log(chalk.red(error.message));
-      process.exit(1);
-    }
+    spinner.fail(chalk.red(`Couldn't get a size for ${packageName}`));
+    reportFailure(error, [packageName]);
   }
 }
 
@@ -224,7 +180,7 @@ const comparePackages = async (packageNames) => {
     // Fetch all package data in parallel
     const results = await Promise.all(
       packageNames.map(async (pkg) => {
-        const response = await axios.get(`${BUNDLEPHOBIA_API}?package=${pkg}`);
+        const response = await axios.get(buildBundlephobiaUrl(pkg));
         const scoreData = calculatePackageScore(response.data);
         return {
           name: pkg,
@@ -248,7 +204,7 @@ const comparePackages = async (packageNames) => {
     return results;
   } catch (error) {
     spinner.fail(chalk.red("Failed to compare packages"));
-    handleComparisonError(error, packageNames);
+    reportFailure(error, packageNames);
   }
 };
 
@@ -327,51 +283,88 @@ ${chalk.yellow("🎯 Best Choice For:")}
 `;
 }
 
-function handleComparisonError(error, packageNames) {
-  if (error.response?.status === 404) {
-    // Find which package caused the 404
-    const failedPackage = packageNames.find((pkg) =>
-      error.message.includes(pkg)
-    );
+function isScopedPackage(name) {
+  return name.startsWith("@");
+}
 
+function box(title) {
+  const rule = "─".repeat(title.length + 2);
+  console.log("\n" + chalk.yellow(`┌${rule}┐`));
+  console.log(chalk.yellow("│ ") + chalk.red.bold(title) + chalk.yellow(" │"));
+  console.log(chalk.yellow(`└${rule}┘`));
+}
+
+function suggest(lines) {
+  console.log("\n" + chalk.greenBright("What you can do:"));
+  lines.forEach((line) =>
+    console.log(chalk.dim(chalk.greenBright("->") + " " + line))
+  );
+}
+
+// Hippoo reads sizes from Bundlephobia, which only indexes the public npm
+// registry. Hippoo sends no auth and never reads .npmrc, so anything behind a
+// private registry is invisible to it. Say that plainly instead of telling
+// people to check for typos.
+function reportFailure(error, packageNames) {
+  const status = error.response?.status;
+
+  if (status === 404) {
+    const scoped = packageNames.filter(isScopedPackage);
+
+    if (scoped.length > 0) {
+      box(`🦛 Hippoo can't measure ${scoped.join(", ")}`);
+      console.log(
+        "\n" +
+          chalk.white(
+            "Hippoo gets its numbers from Bundlephobia, which only covers packages\n" +
+              "published to the public npm registry. A package on a private registry\n" +
+              "was never published there, so there is nothing to measure. Your .npmrc\n" +
+              "credentials make no difference: Hippoo never talks to your registry."
+          )
+      );
+      suggest([
+        "Run Hippoo on the public packages in your tree",
+        "Double-check the name if you expected this one to be public",
+      ]);
+      process.exit(1);
+    }
+
+    box(`🦛 Hippoo couldn't find ${packageNames.join(", ")}`);
+    suggest([
+      "Check for typos in the package name",
+      "Make sure the package is published to npm",
+      "Try searching on npmjs.com",
+    ]);
+    process.exit(1);
+  }
+
+  if (status === 429) {
+    box("🦛 Bundlephobia is rate limiting us");
     console.log(
       "\n" +
-        chalk.yellow("┌──────────────────────────────────────────────────────┐")
+        chalk.white(
+          "Too many requests went out in a short window. This clears on its own."
+        )
     );
-    console.log(
-      chalk.yellow("│") +
-        chalk.red.bold(
-          ` 🦛 Hippoo couldn't find package: ${failedPackage || "unknown"} `
-        ) +
-        chalk.yellow("│")
-    );
-    console.log(
-      chalk.yellow("└──────────────────────────────────────────────────────┘")
-    );
-    console.log("\n" + chalk.greenBright("Suggestions:"));
-    console.log(
-      chalk.dim(
-        chalk.greenBright("->") + " Check for typos in the package names"
-      )
-    );
-    console.log(
-      chalk.dim(
-        chalk.greenBright("->") + " Make sure all packages are published to npm"
-      )
-    );
-  } else {
-    console.log(
-      "\n" + chalk.yellow("┌────────────────────────────────────────┐")
-    );
-    console.log(
-      chalk.yellow("│") +
-        chalk.red.bold(` 🦛 Something Went Wrong `) +
-        chalk.yellow("│")
-    );
-    console.log(chalk.yellow("└────────────────────────────────────────┘"));
-    console.log("\n" + chalk.white("Failed to fetch package information:"));
-    console.log(chalk.red(error.message));
+    suggest(["Wait a minute and run it again", "Compare fewer packages at once"]);
+    process.exit(1);
   }
+
+  if (status >= 500) {
+    box(`🦛 Bundlephobia returned ${status}`);
+    console.log(
+      "\n" +
+        chalk.white(
+          "That is a fault on their side, not yours, and it is usually brief."
+        )
+    );
+    suggest(["Run the same command again in a moment"]);
+    process.exit(1);
+  }
+
+  box("🦛 Something went wrong");
+  console.log("\n" + chalk.white("Failed to fetch package information:"));
+  console.log(chalk.red(error.message));
   process.exit(1);
 }
 

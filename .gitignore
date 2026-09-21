@@ -48,3 +48,14 @@ coverage/
 
 # Optional eslint cache
 .eslintcache
+# Yarn Plug'n'Play
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+# Local tooling
+graft/
