@@ -4,13 +4,14 @@
 const { Command } = require("commander");
 const chalk = require("chalk");
 const { getPackageSize, comparePackages } = require("./utils/utils");
+const { version } = require("./package.json");
 const program = new Command();
 
 program
   .name(chalk.cyan("hippoo"))
   .description(chalk.white("A CLI tool to check for hippoo-like packages."))
   .version(
-    "0.1.0",
+    version,
     "-v, --version",
     chalk.green("🔖 Output the current version")
   );
@@ -108,7 +109,7 @@ ${chalk.yellow.bold("Commands:")}
   ${chalk.green("size")}     Calculate total size of installed packages
 
 ${chalk.red("For more info, visit:")} ${chalk.red(
-    "https://github.com/yourusername/hippo-cli"
+    "https://github.com/codiejay/hippoo"
   )}
 `
 );

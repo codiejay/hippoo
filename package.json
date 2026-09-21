@@ -1,11 +1,9 @@
 {
   "name": "hippoo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "🔍 A tool to effortlessly check & compare npm package sizes! 📦✨",
   "main": "index.js",
-  "bin": {
-    "hippoo": "./index.js"
-  },
+  "bin": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -43,5 +41,8 @@
   "homepage": "https://github.com/codiejay/hippoo#readme",
   "engines": {
     "node": ">=14"
+  },
+  "devDependencies": {
+    "@locator/babel-jsx": "^0.4.4"
   }
 }
